@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCAP2 Retreat Evaluation Survey</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1a5276;
+    --primary-light: #2e86c1;
+    --accent: #148f77;
+    --accent-light: #1abc9c;
+    --warn: #ca6f1e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #1c2833;
+    --text-muted: #5d6d7e;
+    --border: #d5d8dc;
+    --scale-1: #e74c3c;
+    --scale-2: #e67e22;
+    --scale-3: #f1c40f;
+    --scale-4: #2ecc71;
+    --scale-5: #27ae60;
+    --shadow: 0 2px 12px rgba(0,0,0,0.09);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 62px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    position: sticky; top: 0; z-index: 100;
+  }
+  header .brand { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.3px; }
+  header .brand span { color: #a9cce3; font-weight: 400; }
+  header .nav-btns { display: flex; gap: 8px; }
+  header .nav-btns button {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 500;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  header .nav-btns button:hover,
+  header .nav-btns button.active {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.7);
+  }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── HOME ── */
+  .home-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    text-align: center;
+    padding: 64px 24px 48px;
+  }
+  .home-hero h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 10px; }
+  .home-hero p { font-size: 1rem; color: #a9cce3; max-width: 540px; margin: 0 auto; line-height: 1.6; }
+
+  .home-cards {
+    display: flex;
+    gap: 24px;
+    max-width: 820px;
+    margin: -32px auto 40px;
+    padding: 0 24px;
+    flex-wrap: wrap;
+  }
+  .survey-card {
+    flex: 1;
+    min-width: 300px;
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    border-top: 4px solid var(--primary);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .survey-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,0.13); }
+  .survey-card.post { border-top-color: var(--accent); }
+  .survey-card .card-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--primary);
+    background: #d6eaf8;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .survey-card.post .card-tag { color: var(--accent); background: #d5f5e3; }
+  .survey-card h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .survey-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 20px; }
+  .survey-card .response-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; color: var(--text-muted);
+    background: var(--bg); padding: 5px 12px; border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .survey-card .response-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+  .survey-card.post .response-badge .dot { background: var(--accent); }
+  .btn-start {
+    display: block; width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .survey-card.post .btn-start { background: var(--accent); }
+  .btn-start:hover { opacity: 0.88; }
+
+  /* ── FORM ── */
+  .form-container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+  .form-header {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    border-top: 5px solid var(--primary);
+  }
+  .form-header.post { border-top-color: var(--accent); }
+  .form-header h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+  .form-header p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    height: 4px;
+    border-radius: 2px;
+    margin-top: 18px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+  }
+  .form-header.post .progress-bar-fill { background: var(--accent); }
+
+  .name-card, .question-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .name-card label { font-size: 0.92rem; font-weight: 600; display: block; margin-bottom: 8px; }
+  .name-card input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .name-card input[type="text"]:focus { border-color: var(--primary-light); }
+
+  .question-card .q-number {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .question-card .q-text {
+    font-size: 0.97rem;
+    font-weight: 500;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  /* Scale */
+  .scale-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+  .scale-btn {
+    flex: 1;
+    min-width: 42px;
+    padding: 10px 4px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-align: center;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .scale-btn:hover { border-color: var(--primary-light); color: var(--primary); background: #eaf4fc; }
+  .scale-btn.selected-1 { border-color: var(--scale-1); background: var(--scale-1); color: white; }
+  .scale-btn.selected-2 { border-color: var(--scale-2); background: var(--scale-2); color: white; }
+  .scale-btn.selected-3 { border-color: var(--scale-3); background: var(--scale-3); color: var(--text); }
+  .scale-btn.selected-4 { border-color: var(--scale-4); background: var(--scale-4); color: white; }
+  .scale-btn.selected-5 { border-color: var(--scale-5); background: var(--scale-5); color: white; }
+
+  /* Open-ended */
+  .question-card textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.93rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 110px;
+    outline: none;
+    transition: border-color 0.15s;
+    line-height: 1.55;
+  }
+  .question-card textarea:focus { border-color: var(--primary-light); }
+
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .btn-back {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-muted);
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 0.93rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-back:hover { border-color: var(--text-muted); color: var(--text); }
+  .btn-submit {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 36px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.15s;
+  }
+  .btn-submit.post { background: var(--accent); }
+  .btn-submit:hover { opacity: 0.87; }
+  .required-note { font-size: 0.78rem; color: var(--text-muted); }
+  .error-msg { color: #e74c3c; font-size: 0.8rem; margin-top: 6px; display: none; }
+  .error-msg.show { display: block; }
+
+  /* ── THANK YOU ── */
+  .thankyou-container {
+    max-width: 500px;
+    margin: 60px auto;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .thankyou-icon { font-size: 4rem; margin-bottom: 16px; }
+  .thankyou-container h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
+  .thankyou-container.post h2 { color: var(--accent); }
+  .thankyou-container p { font-size: 0.97rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+  .btn-home {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-home.post { background: var(--accent); }
+
+  /* ── RESULTS / DASHBOARD ── */
+  .dashboard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+  .dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .dashboard-header h2 { font-size: 1.4rem; font-weight: 700; }
+  .btn-export {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 8px 18px;
+    border-radius: 7px;
+    font-size: 0.83rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .btn-export:hover { border-color: var(--primary); color: var(--primary); }
+
+  .survey-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+  .survey-tab {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .survey-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .survey-tab.active.post { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .stats-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    flex: 1;
+    min-width: 140px;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary);
+  }
+  .stat-card.post { border-left-color: var(--accent); }
+  .stat-card .stat-val { font-size: 2rem; font-weight: 800; color: var(--primary); line-height: 1; }
+  .stat-card.post .stat-val { color: var(--accent); }
+  .stat-card .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+  .chart-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 24px 26px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .chart-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 18px; color: var(--text); }
+  .chart-wrap { position: relative; height: 260px; }
+
+  .responses-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 24px 26px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .responses-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+  .response-item {
+    padding: 14px 16px;
+    background: var(--bg);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--primary-light);
+  }
+  .response-item.post { border-left-color: var(--accent-light); }
+  .response-item .resp-meta { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 5px; }
+  .response-item .resp-text { font-size: 0.9rem; line-height: 1.55; }
+
+  .all-responses-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 24px 26px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .all-responses-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+  .resp-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+  .resp-table th {
+    background: var(--bg);
+    text-align: left;
+    padding: 9px 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    white-space: nowrap;
+  }
+  .resp-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .resp-table tr:last-child td { border-bottom: none; }
+  .resp-table tr:hover td { background: #f8f9fa; }
+
+  .score-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: white;
+  }
+  .pill-1 { background: var(--scale-1); }
+  .pill-2 { background: var(--scale-2); }
+  .pill-3 { background: var(--scale-3); color: var(--text); }
+  .pill-4 { background: var(--scale-4); }
+  .pill-5 { background: var(--scale-5); }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+  }
+  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state p { font-size: 0.95rem; }
+
+  .clear-btn {
+    background: transparent;
+    border: 1.5px solid #e74c3c;
+    color: #e74c3c;
+    padding: 7px 16px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .clear-btn:hover { background: #e74c3c; color: white; }
+
+  @media (max-width: 600px) {
+    .home-cards { flex-direction: column; }
+    .dashboard-container, .form-container { padding: 20px 14px 48px; }
+    .form-header { padding: 20px; }
+    .chart-wrap { height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">VCAP2 <span>Retreat Evaluation</span></div>
+  <div class="nav-btns">
+    <button id="nav-home" class="active" onclick="showView('home')">Home</button>
+    <button id="nav-results" onclick="showView('results')">📊 Results</button>
+  </div>
+</header>
+
+<!-- ══ HOME VIEW ══ -->
+<div id="view-home" class="view active">
+  <div class="home-hero">
+    <h1>2026 VCAP II Retreat Evaluation</h1>
+    <p>Please fill out the appropriate survey before or after the retreat. Your feedback helps us improve future programs.</p>
+  </div>
+
+  <div class="home-cards">
+    <div class="survey-card" onclick="startSurvey('pre')">
+      <span class="card-tag">Before Retreat</span>
+      <h2>Pre-Evaluation Survey</h2>
+      <p>Share your expectations and preparedness before the retreat begins to help us tailor sessions to your needs.</p>
+      <div class="response-badge">
+        <span class="dot"></span>
+        <span id="home-pre-count">0 responses</span>
+      </div>
+      <button class="btn-start">Take Pre-Survey →</button>
+    </div>
+
+    <div class="survey-card post" onclick="startSurvey('post')">
+      <span class="card-tag" style="color:var(--accent);background:#d5f5e3;">After Retreat</span>
+      <h2>Post-Evaluation Survey</h2>
+      <p>Share your feedback and outcomes after the retreat concludes to help us improve future programs.</p>
+      <div class="response-badge">
+        <span class="dot" style="background:var(--accent)"></span>
+        <span id="home-post-count">0 responses</span>
+      </div>
+      <button class="btn-start post" style="background:var(--accent)">Take Post-Survey →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRE SURVEY VIEW ══ -->
+<div id="view-pre-survey" class="view">
+  <div class="form-container">
+    <div class="form-header" id="pre-form-header">
+      <h2>2026 VCAP II Retreat Pre-Evaluation Survey</h2>
+      <p>Please complete this short survey before the retreat begins. Your responses will help us tailor the sessions to meet your expectations.</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="pre-progress" style="width:0%"></div>
+      </div>
+    </div>
+
+    <form id="pre-survey-form" novalidate>
+
+      <div class="name-card">
+        <label for="pre-name">Your Name <span style="color:#e74c3c">*</span></label>
+        <input type="text" id="pre-name" placeholder="Enter your full name" autocomplete="name">
+        <div class="error-msg" id="pre-name-error">Please enter your name.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="section-label">Section 1 — Expectations &amp; Preparedness</div>
+
+        <div class="q-number">Question 1 of 8</div>
+        <div class="q-text">I have clear expectations for what I hope to gain from this retreat.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q1-scale">
+          <button type="button" class="scale-btn" data-q="pre-q1" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q1" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q1" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q1" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q1" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q1-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 2 of 8</div>
+        <div class="q-text">I am interested in discussing achievements, challenges, and lessons learnt.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q2-scale">
+          <button type="button" class="scale-btn" data-q="pre-q2" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q2" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q2" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q2" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q2" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q2-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 3 of 8</div>
+        <div class="q-text">I feel confident in my understanding of VCAP2's current outputs and targets.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q3-scale">
+          <button type="button" class="scale-btn" data-q="pre-q3" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q3" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q3" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q3" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q3" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q3-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 4 of 8</div>
+        <div class="q-text">I believe the retreat will help address critical challenges and gaps.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q4-scale">
+          <button type="button" class="scale-btn" data-q="pre-q4" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q4" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q4" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q4" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q4" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q4-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 5 of 8</div>
+        <div class="q-text">Team cohesion and collaboration are currently strong.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q5-scale">
+          <button type="button" class="scale-btn" data-q="pre-q5" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q5" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q5" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q5" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q5" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q5-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 6 of 8</div>
+        <div class="q-text">I expect to gain new skills or knowledge from this retreat.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q6-scale">
+          <button type="button" class="scale-btn" data-q="pre-q6" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q6" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q6" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q6" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q6" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q6-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 7 of 8</div>
+        <div class="q-text">I feel prepared to fully engage in all sessions and activities.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="pre-q7-scale">
+          <button type="button" class="scale-btn" data-q="pre-q7" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="pre-q7" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="pre-q7" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="pre-q7" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="pre-q7" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="pre-q7-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="section-label">Section 2 — Open-ended</div>
+        <div class="q-number">Question 8 of 8</div>
+        <div class="q-text">What specific topics or issues would you like to see addressed during this retreat?</div>
+        <textarea id="pre-q8" placeholder="Share your thoughts here…"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-back" onclick="showView('home')">← Back</button>
+        <span class="required-note">* Required fields</span>
+        <button type="submit" class="btn-submit">Submit Survey</button>
+      </div>
+      <div class="error-msg" id="pre-form-error" style="margin-top:10px; text-align:right;">Please answer all required questions before submitting.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ══ POST SURVEY VIEW ══ -->
+<div id="view-post-survey" class="view">
+  <div class="form-container">
+    <div class="form-header post" id="post-form-header">
+      <h2>VCAP2 Retreat Post-Evaluation Survey</h2>
+      <p>Please complete this survey after the retreat concludes. Your feedback will help us improve future programs.</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="post-progress" style="width:0%"></div>
+      </div>
+    </div>
+
+    <form id="post-survey-form" novalidate>
+
+      <div class="name-card">
+        <label for="post-name">Your Name <span style="color:#e74c3c">*</span></label>
+        <input type="text" id="post-name" placeholder="Enter your full name" autocomplete="name">
+        <div class="error-msg" id="post-name-error">Please enter your name.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="section-label">Section 1 — Outcomes &amp; Impact</div>
+
+        <div class="q-number">Question 1 of 9</div>
+        <div class="q-text">My expectations for the retreat were met.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q1-scale">
+          <button type="button" class="scale-btn" data-q="post-q1" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q1" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q1" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q1" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q1" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q1-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 2 of 9</div>
+        <div class="q-text">The presentations on achievements, challenges, and lessons learnt were useful.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q2-scale">
+          <button type="button" class="scale-btn" data-q="post-q2" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q2" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q2" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q2" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q2" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q2-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 3 of 9</div>
+        <div class="q-text">I gained new insights or strategies regarding VCAP2's implementation.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q3-scale">
+          <button type="button" class="scale-btn" data-q="post-q3" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q3" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q3" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q3" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q3" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q3-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 4 of 9</div>
+        <div class="q-text">The strategic planning sessions clarified priorities and actionable steps for 2026.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q4-scale">
+          <button type="button" class="scale-btn" data-q="post-q4" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q4" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q4" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q4" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q4" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q4-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 5 of 9</div>
+        <div class="q-text">Team cohesion and shared vision improved as a result of the retreat.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q5-scale">
+          <button type="button" class="scale-btn" data-q="post-q5" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q5" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q5" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q5" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q5" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q5-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 6 of 9</div>
+        <div class="q-text">The sessions and activities were impactful and relevant.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q6-scale">
+          <button type="button" class="scale-btn" data-q="post-q6" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q6" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q6" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q6" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q6" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q6-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 7 of 9</div>
+        <div class="q-text">I am committed to applying what I learned in my work going forward.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q7-scale">
+          <button type="button" class="scale-btn" data-q="post-q7" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q7" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q7" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q7" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q7" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q7-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-number">Question 8 of 9</div>
+        <div class="q-text">The retreat was well-organized and met my professional needs.</div>
+        <div class="scale-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="scale-row" id="post-q8-scale">
+          <button type="button" class="scale-btn" data-q="post-q8" data-val="1" onclick="selectScale(this)">1</button>
+          <button type="button" class="scale-btn" data-q="post-q8" data-val="2" onclick="selectScale(this)">2</button>
+          <button type="button" class="scale-btn" data-q="post-q8" data-val="3" onclick="selectScale(this)">3</button>
+          <button type="button" class="scale-btn" data-q="post-q8" data-val="4" onclick="selectScale(this)">4</button>
+          <button type="button" class="scale-btn" data-q="post-q8" data-val="5" onclick="selectScale(this)">5</button>
+        </div>
+        <div class="error-msg" id="post-q8-error">Please select a rating.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="section-label">Section 2 — Open-ended</div>
+        <div class="q-number">Question 9 of 9</div>
+        <div class="q-text">What suggestions do you have for improving future retreats?</div>
+        <textarea id="post-q9" placeholder="Share your thoughts here…"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-back" onclick="showView('home')">← Back</button>
+        <span class="required-note">* Required fields</span>
+        <button type="submit" class="btn-submit post">Submit Survey</button>
+      </div>
+      <div class="error-msg" id="post-form-error" style="margin-top:10px; text-align:right;">Please answer all required questions before submitting.</div>
+    </form>
+  </div>
+</div>
+
+<!-- ══ THANK YOU VIEWS ══ -->
+<div id="view-pre-thanks" class="view">
+  <div class="thankyou-container">
+    <div class="thankyou-icon">✅</div>
+    <h2>Thank You!</h2>
+    <p>Your pre-retreat survey has been submitted successfully. We look forward to seeing you at the retreat!</p>
+    <button class="btn-home" onclick="showView('home')">Back to Home</button>
+  </div>
+</div>
+
+<div id="view-post-thanks" class="view">
+  <div class="thankyou-container post">
+    <div class="thankyou-icon">🎉</div>
+    <h2 style="color:var(--accent)">Thank You!</h2>
+    <p>Your post-retreat survey has been submitted. Your feedback is invaluable and will help shape future programs.</p>
+    <button class="btn-home post" onclick="showView('home')">Back to Home</button>
+  </div>
+</div>
+
+<!-- ══ RESULTS VIEW ══ -->
+<div id="view-results" class="view">
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2>📊 Response Analytics</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-export" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="clear-btn" onclick="clearData()">🗑 Clear All Data</button>
+      </div>
+    </div>
+
+    <div class="survey-tabs">
+      <button class="survey-tab active" id="tab-pre" onclick="switchResultTab('pre')">Pre-Retreat Survey</button>
+      <button class="survey-tab post" id="tab-post" onclick="switchResultTab('post')">Post-Retreat Survey</button>
+    </div>
+
+    <div id="results-pre">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val" id="pre-total-stat">0</div>
+          <div class="stat-label">Total Responses</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="pre-avg-stat">—</div>
+          <div class="stat-label">Overall Average Score</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="pre-openended-stat">0</div>
+          <div class="stat-label">Open-ended Responses</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Average Score per Question (Scale 1–5)</h3>
+        <div class="chart-wrap"><canvas id="pre-bar-chart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Response Distribution — Rating Frequency</h3>
+        <div class="chart-wrap"><canvas id="pre-dist-chart"></canvas></div>
+      </div>
+
+      <div class="responses-card" id="pre-open-card">
+        <h3>Open-ended Responses — Q8: Topics/Issues to Address</h3>
+        <div id="pre-open-list"><div class="empty-state"><div class="empty-icon">💬</div><p>No open-ended responses yet.</p></div></div>
+      </div>
+
+      <div class="all-responses-card">
+        <h3>All Responses</h3>
+        <div style="overflow-x:auto;">
+          <table class="resp-table" id="pre-all-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Name</th><th>Date</th>
+                <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th>
+                <th>Q8 (Open)</th>
+              </tr>
+            </thead>
+            <tbody id="pre-all-tbody">
+              <tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:32px;">No responses yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="results-post" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card post">
+          <div class="stat-val" id="post-total-stat">0</div>
+          <div class="stat-label">Total Responses</div>
+        </div>
+        <div class="stat-card post">
+          <div class="stat-val" id="post-avg-stat">—</div>
+          <div class="stat-label">Overall Average Score</div>
+        </div>
+        <div class="stat-card post">
+          <div class="stat-val" id="post-openended-stat">0</div>
+          <div class="stat-label">Open-ended Responses</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Average Score per Question (Scale 1–5)</h3>
+        <div class="chart-wrap"><canvas id="post-bar-chart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Response Distribution — Rating Frequency</h3>
+        <div class="chart-wrap"><canvas id="post-dist-chart"></canvas></div>
+      </div>
+
+      <div class="responses-card" id="post-open-card">
+        <h3>Open-ended Responses — Q9: Suggestions for Future Retreats</h3>
+        <div id="post-open-list"><div class="empty-state"><div class="empty-icon">💬</div><p>No open-ended responses yet.</p></div></div>
+      </div>
+
+      <div class="all-responses-card">
+        <h3>All Responses</h3>
+        <div style="overflow-x:auto;">
+          <table class="resp-table" id="post-all-table">
+            <thead>
+              <tr>
+                <th>#</th><th>Name</th><th>Date</th>
+                <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th><th>Q8</th>
+                <th>Q9 (Open)</th>
+              </tr>
+            </thead>
+            <tbody id="post-all-tbody">
+              <tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:32px;">No responses yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  DATA LAYER  (localStorage)
+// ════════════════════════════════════════
+const PRE_KEY = 'vcap2_pre_responses';
+const POST_KEY = 'vcap2_post_responses';
+
+function loadData(key) {
+  try { return JSON.parse(localStorage.getItem(key)) || []; }
+  catch(e) { return []; }
+}
+function saveData(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+// ════════════════════════════════════════
+//  SCALE DATA STATE
+// ════════════════════════════════════════
+const scaleValues = {};
+
+function selectScale(btn) {
+  const q = btn.dataset.q;
+  const val = parseInt(btn.dataset.val);
+  scaleValues[q] = val;
+
+  // Clear all siblings, apply selected class
+  btn.closest('.scale-row').querySelectorAll('.scale-btn').forEach(b => {
+    b.className = 'scale-btn';
+  });
+  btn.classList.add('selected-' + val);
+
+  // Update progress
+  updateProgress(q.startsWith('pre') ? 'pre' : 'post');
+
+  // Hide error
+  const errEl = document.getElementById(q + '-error');
+  if (errEl) errEl.classList.remove('show');
+}
+
+function updateProgress(type) {
+  const totalQ = type === 'pre' ? 7 : 8;
+  let answered = 0;
+  for (let i = 1; i <= totalQ; i++) {
+    if (scaleValues[type + '-q' + i] !== undefined) answered++;
+  }
+  const pct = Math.round((answered / (totalQ + 1)) * 100);
+  document.getElementById(type + '-progress').style.width = pct + '%';
+}
+
+// ════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+
+  // Nav button states
+  document.querySelectorAll('.nav-btns button').forEach(b => b.classList.remove('active'));
+  if (name === 'home') document.getElementById('nav-home').classList.add('active');
+  if (name === 'results') {
+    document.getElementById('nav-results').classList.add('active');
+    renderResults();
+  }
+
+  window.scrollTo(0, 0);
+  updateHomeCounts();
+}
+
+function startSurvey(type) {
+  // Reset form
+  const form = document.getElementById(type + '-survey-form');
+  form.reset();
+  // Clear scale state for this type
+  for (let i = 1; i <= 9; i++) delete scaleValues[type + '-q' + i];
+  form.querySelectorAll('.scale-btn').forEach(b => { b.className = 'scale-btn'; });
+  form.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  document.getElementById(type + '-progress').style.width = '0%';
+
+  showView(type + '-survey');
+}
+
+// ════════════════════════════════════════
+//  FORM SUBMISSION
+// ════════════════════════════════════════
+document.getElementById('pre-survey-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!validateForm('pre')) return;
+
+  const entry = {
+    name: document.getElementById('pre-name').value.trim(),
+    date: new Date().toLocaleDateString(),
+    q1: scaleValues['pre-q1'],
+    q2: scaleValues['pre-q2'],
+    q3: scaleValues['pre-q3'],
+    q4: scaleValues['pre-q4'],
+    q5: scaleValues['pre-q5'],
+    q6: scaleValues['pre-q6'],
+    q7: scaleValues['pre-q7'],
+    q8: document.getElementById('pre-q8').value.trim()
+  };
+
+  const data = loadData(PRE_KEY);
+  data.push(entry);
+  saveData(PRE_KEY, data);
+  showView('pre-thanks');
+});
+
+document.getElementById('post-survey-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!validateForm('post')) return;
+
+  const entry = {
+    name: document.getElementById('post-name').value.trim(),
+    date: new Date().toLocaleDateString(),
+    q1: scaleValues['post-q1'],
+    q2: scaleValues['post-q2'],
+    q3: scaleValues['post-q3'],
+    q4: scaleValues['post-q4'],
+    q5: scaleValues['post-q5'],
+    q6: scaleValues['post-q6'],
+    q7: scaleValues['post-q7'],
+    q8: scaleValues['post-q8'],
+    q9: document.getElementById('post-q9').value.trim()
+  };
+
+  const data = loadData(POST_KEY);
+  data.push(entry);
+  saveData(POST_KEY, data);
+  showView('post-thanks');
+});
+
+function validateForm(type) {
+  let valid = true;
+
+  // Name
+  const nameVal = document.getElementById(type + '-name').value.trim();
+  if (!nameVal) {
+    document.getElementById(type + '-name-error').classList.add('show');
+    valid = false;
+  }
+
+  // Scale questions
+  const totalQ = type === 'pre' ? 7 : 8;
+  for (let i = 1; i <= totalQ; i++) {
+    if (!scaleValues[type + '-q' + i]) {
+      document.getElementById(type + '-q' + i + '-error').classList.add('show');
+      valid = false;
+    }
+  }
+
+  if (!valid) {
+    document.getElementById(type + '-form-error').classList.add('show');
+    // Scroll to first error
+    const firstErr = document.querySelector('#view-' + type + '-survey .error-msg.show');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else {
+    document.getElementById(type + '-form-error').classList.remove('show');
+  }
+
+  return valid;
+}
+
+// ════════════════════════════════════════
+//  HOME COUNTS
+// ════════════════════════════════════════
+function updateHomeCounts() {
+  const preCount = loadData(PRE_KEY).length;
+  const postCount = loadData(POST_KEY).length;
+  document.getElementById('home-pre-count').textContent = preCount + ' response' + (preCount !== 1 ? 's' : '');
+  document.getElementById('home-post-count').textContent = postCount + ' response' + (postCount !== 1 ? 's' : '');
+}
+
+// ════════════════════════════════════════
+//  RESULTS TABS
+// ════════════════════════════════════════
+let activeResultTab = 'pre';
+let preBarChart, preDistChart, postBarChart, postDistChart;
+
+function switchResultTab(type) {
+  activeResultTab = type;
+  document.getElementById('results-pre').style.display = type === 'pre' ? 'block' : 'none';
+  document.getElementById('results-post').style.display = type === 'post' ? 'block' : 'none';
+  document.getElementById('tab-pre').classList.toggle('active', type === 'pre');
+  document.getElementById('tab-post').classList.toggle('active', type === 'post');
+  renderResults();
+}
+
+// ════════════════════════════════════════
+//  RENDER RESULTS
+// ════════════════════════════════════════
+const preQLabels = [
+  'Q1: Clear expectations',
+  'Q2: Interested in discussions',
+  'Q3: Confident in VCAP2 outputs',
+  'Q4: Retreat addresses challenges',
+  'Q5: Team cohesion is strong',
+  'Q6: Expect new skills/knowledge',
+  'Q7: Prepared to engage'
+];
+
+const postQLabels = [
+  'Q1: Expectations met',
+  'Q2: Presentations useful',
+  'Q3: New insights gained',
+  'Q4: Strategic planning clarified',
+  'Q5: Team cohesion improved',
+  'Q6: Sessions impactful',
+  'Q7: Committed to apply learnings',
+  'Q8: Retreat well-organized'
+];
+
+function renderResults() {
+  if (activeResultTab === 'pre') renderPreResults();
+  else renderPostResults();
+}
+
+function calcAverages(data, numQ) {
+  const avgs = [];
+  for (let i = 1; i <= numQ; i++) {
+    const vals = data.map(r => r['q' + i]).filter(v => v !== undefined && v !== null);
+    avgs.push(vals.length ? (vals.reduce((a, b) => a + b, 0) / vals.length) : 0);
+  }
+  return avgs;
+}
+
+function calcDistribution(data, numQ) {
+  // Returns array of 5 counts [1s, 2s, 3s, 4s, 5s]
+  const dist = [0, 0, 0, 0, 0];
+  for (let i = 1; i <= numQ; i++) {
+    data.forEach(r => {
+      const v = r['q' + i];
+      if (v >= 1 && v <= 5) dist[v - 1]++;
+    });
+  }
+  return dist;
+}
+
+function renderPreResults() {
+  const data = loadData(PRE_KEY);
+  const numQ = 7;
+
+  // Stats
+  document.getElementById('pre-total-stat').textContent = data.length;
+  const avgs = calcAverages(data, numQ);
+  const overallAvg = avgs.filter(a => a > 0);
+  document.getElementById('pre-avg-stat').textContent = overallAvg.length
+    ? (overallAvg.reduce((a, b) => a + b, 0) / overallAvg.length).toFixed(1) : '—';
+  const openCount = data.filter(r => r.q8 && r.q8.trim()).length;
+  document.getElementById('pre-openended-stat').textContent = openCount;
+
+  // Bar chart
+  const barCtx = document.getElementById('pre-bar-chart').getContext('2d');
+  if (preBarChart) preBarChart.destroy();
+  preBarChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: preQLabels,
+      datasets: [{
+        label: 'Average Score',
+        data: avgs,
+        backgroundColor: avgs.map(v => v >= 4 ? '#2e86c1cc' : v >= 3 ? '#148f77cc' : '#e74c3ccc'),
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { min: 0, max: 5, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+        x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' Average: ' + (ctx.raw || 0).toFixed(2) + ' / 5'
+          }
+        }
+      }
+    }
+  });
+
+  // Distribution chart
+  const dist = calcDistribution(data, numQ);
+  const distCtx = document.getElementById('pre-dist-chart').getContext('2d');
+  if (preDistChart) preDistChart.destroy();
+  preDistChart = new Chart(distCtx, {
+    type: 'bar',
+    data: {
+      labels: ['1 - Strongly Disagree', '2 - Disagree', '3 - Neutral', '4 - Agree', '5 - Strongly Agree'],
+      datasets: [{
+        label: 'Number of Ratings',
+        data: dist,
+        backgroundColor: ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#27ae60'],
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+        x: { grid: { display: false } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Open-ended
+  const openItems = data.filter(r => r.q8 && r.q8.trim());
+  const openList = document.getElementById('pre-open-list');
+  if (openItems.length === 0) {
+    openList.innerHTML = '<div class="empty-state"><div class="empty-icon">💬</div><p>No open-ended responses yet.</p></div>';
+  } else {
+    openList.innerHTML = openItems.map(r =>
+      `<div class="response-item">
+        <div class="resp-meta">${r.name || 'Anonymous'} — ${r.date}</div>
+        <div class="resp-text">${escapeHtml(r.q8)}</div>
+      </div>`
+    ).join('');
+  }
+
+  // All responses table
+  const tbody = document.getElementById('pre-all-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:var(--text-muted);padding:32px;">No responses yet.</td></tr>';
+  } else {
+    tbody.innerHTML = data.map((r, i) =>
+      `<tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(r.name || 'Anonymous')}</td>
+        <td style="white-space:nowrap">${r.date}</td>
+        ${[1,2,3,4,5,6,7].map(q => `<td><span class="score-pill pill-${r['q'+q]}">${r['q'+q]}</span></td>`).join('')}
+        <td style="max-width:200px;font-size:0.8rem;">${escapeHtml(r.q8 || '—')}</td>
+      </tr>`
+    ).join('');
+  }
+}
+
+function renderPostResults() {
+  const data = loadData(POST_KEY);
+  const numQ = 8;
+
+  document.getElementById('post-total-stat').textContent = data.length;
+  const avgs = calcAverages(data, numQ);
+  const overallAvg = avgs.filter(a => a > 0);
+  document.getElementById('post-avg-stat').textContent = overallAvg.length
+    ? (overallAvg.reduce((a, b) => a + b, 0) / overallAvg.length).toFixed(1) : '—';
+  const openCount = data.filter(r => r.q9 && r.q9.trim()).length;
+  document.getElementById('post-openended-stat').textContent = openCount;
+
+  // Bar chart
+  const barCtx = document.getElementById('post-bar-chart').getContext('2d');
+  if (postBarChart) postBarChart.destroy();
+  postBarChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: postQLabels,
+      datasets: [{
+        label: 'Average Score',
+        data: avgs,
+        backgroundColor: avgs.map(v => v >= 4 ? '#148f77cc' : v >= 3 ? '#1abc9ccc' : '#e74c3ccc'),
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { min: 0, max: 5, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+        x: { ticks: { font: { size: 11 } }, grid: { display: false } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: ctx => ' Average: ' + (ctx.raw || 0).toFixed(2) + ' / 5' }
+        }
+      }
+    }
+  });
+
+  // Distribution chart
+  const dist = calcDistribution(data, numQ);
+  const distCtx = document.getElementById('post-dist-chart').getContext('2d');
+  if (postDistChart) postDistChart.destroy();
+  postDistChart = new Chart(distCtx, {
+    type: 'bar',
+    data: {
+      labels: ['1 - Strongly Disagree', '2 - Disagree', '3 - Neutral', '4 - Agree', '5 - Strongly Agree'],
+      datasets: [{
+        label: 'Number of Ratings',
+        data: dist,
+        backgroundColor: ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#27ae60'],
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: '#f0f0f0' } },
+        x: { grid: { display: false } }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+
+  // Open-ended
+  const openItems = data.filter(r => r.q9 && r.q9.trim());
+  const openList = document.getElementById('post-open-list');
+  if (openItems.length === 0) {
+    openList.innerHTML = '<div class="empty-state"><div class="empty-icon">💬</div><p>No open-ended responses yet.</p></div>';
+  } else {
+    openList.innerHTML = openItems.map(r =>
+      `<div class="response-item post">
+        <div class="resp-meta">${r.name || 'Anonymous'} — ${r.date}</div>
+        <div class="resp-text">${escapeHtml(r.q9)}</div>
+      </div>`
+    ).join('');
+  }
+
+  // All responses table
+  const tbody = document.getElementById('post-all-tbody');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:32px;">No responses yet.</td></tr>';
+  } else {
+    tbody.innerHTML = data.map((r, i) =>
+      `<tr>
+        <td>${i + 1}</td>
+        <td>${escapeHtml(r.name || 'Anonymous')}</td>
+        <td style="white-space:nowrap">${r.date}</td>
+        ${[1,2,3,4,5,6,7,8].map(q => `<td><span class="score-pill pill-${r['q'+q]}">${r['q'+q]}</span></td>`).join('')}
+        <td style="max-width:200px;font-size:0.8rem;">${escapeHtml(r.q9 || '—')}</td>
+      </tr>`
+    ).join('');
+  }
+}
+
+// ════════════════════════════════════════
+//  EXPORT CSV
+// ════════════════════════════════════════
+function exportCSV() {
+  const type = activeResultTab;
+  const data = loadData(type === 'pre' ? PRE_KEY : POST_KEY);
+  if (!data.length) { alert('No responses to export.'); return; }
+
+  const headers = type === 'pre'
+    ? ['#','Name','Date','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8 - Topics to Address']
+    : ['#','Name','Date','Q1','Q2','Q3','Q4','Q5','Q6','Q7','Q8','Q9 - Suggestions'];
+
+  const numQ = type === 'pre' ? 7 : 8;
+  const openQ = type === 'pre' ? 'q8' : 'q9';
+
+  const rows = data.map((r, i) => {
+    const base = [i+1, r.name || '', r.date];
+    for (let q = 1; q <= numQ; q++) base.push(r['q'+q] || '');
+    base.push('"' + (r[openQ] || '').replace(/"/g, '""') + '"');
+    return base.join(',');
+  });
+
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `VCAP2_${type}_survey_responses.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ════════════════════════════════════════
+//  CLEAR DATA
+// ════════════════════════════════════════
+function clearData() {
+  const type = activeResultTab;
+  const label = type === 'pre' ? 'Pre-Retreat' : 'Post-Retreat';
+  if (confirm(`Are you sure you want to delete ALL ${label} survey responses? This cannot be undone.`)) {
+    localStorage.removeItem(type === 'pre' ? PRE_KEY : POST_KEY);
+    updateHomeCounts();
+    renderResults();
+  }
+}
+
+// ════════════════════════════════════════
+//  UTILS
+// ════════════════════════════════════════
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════
+updateHomeCounts();
+</script>
+</body>
+</html>

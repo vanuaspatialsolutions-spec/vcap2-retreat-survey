@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VCAP2 Retreat Evaluation Survey</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.395.0/dist/umd/lucide.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -1446,8 +1446,13 @@ function esc(str){
 
 // ── INIT ──
 updateHomeCounts();
-document.addEventListener('DOMContentLoaded',()=>lucide.createIcons());
-lucide.createIcons();
+function safeCreateIcons() {
+  if (typeof lucide !== 'undefined') {
+    lucide.createIcons();
+  }
+}
+document.addEventListener('DOMContentLoaded', safeCreateIcons);
+window.addEventListener('load', safeCreateIcons);
 </script>
 </body>
 </html>

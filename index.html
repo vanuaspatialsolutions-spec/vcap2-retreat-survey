@@ -34,6 +34,106 @@
     min-height: 100vh;
   }
 
+  /* ── ORG BANNER ── */
+  .org-banner {
+    background: #ffffff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    border-bottom: 3px solid var(--primary);
+  }
+  .org-banner .org-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .org-banner .org-seal {
+    height: 62px;
+    width: auto;
+    object-fit: contain;
+  }
+  .org-banner .org-logo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .org-banner .org-logo-text .org-icon {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: 800;
+    color: white;
+    flex-shrink: 0;
+  }
+  .org-banner .org-name {
+    font-size: 0.6rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: var(--text-muted);
+    line-height: 1.3;
+    max-width: 100px;
+  }
+  .vcap2-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 0 12px;
+  }
+  .vcap2-center .vcap2-circle {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #0ea5e9 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(14,165,105,0.3);
+  }
+  .vcap2-center .vcap2-circle::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 30%;
+    background: #c2b280;
+    border-radius: 0 0 50% 50%;
+  }
+  .vcap2-center .vcap2-circle::after {
+    content: '';
+    position: absolute;
+    bottom: 25%; left: 30%;
+    width: 40%; height: 35%;
+    background: #22c55e;
+    border-radius: 40% 60% 20% 20%;
+  }
+  .vcap2-center .vcap2-circle span {
+    position: relative; z-index: 2;
+    font-size: 0.5rem; font-weight: 800;
+    color: white; letter-spacing: 1px;
+  }
+  .vcap2-center .vcap2-title {
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: var(--primary);
+  }
+  .vcap2-center .vcap2-sub {
+    font-size: 0.55rem;
+    text-align: center;
+    color: var(--text-muted);
+    line-height: 1.35;
+    font-weight: 600;
+    max-width: 240px;
+    font-style: italic;
+  }
+
   /* ── HEADER ── */
   header {
     background: var(--primary);
@@ -42,11 +142,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 62px;
+    height: 48px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.18);
     position: sticky; top: 0; z-index: 100;
   }
-  header .brand { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.3px; }
+  header .brand { font-size: 0.92rem; font-weight: 700; letter-spacing: 0.3px; }
   header .brand span { color: #a9cce3; font-weight: 400; }
   header .nav-btns { display: flex; gap: 8px; }
   header .nav-btns button {
@@ -503,6 +603,48 @@
 </style>
 </head>
 <body>
+
+<!-- ORG BANNER -->
+<div class="org-banner">
+  <div class="org-item">
+    <div class="org-logo-text">
+      <div class="org-icon" style="background:#8B6914;font-size:1.1rem;">🏛</div>
+      <div class="org-name">Government of Vanuatu</div>
+    </div>
+  </div>
+  <div class="org-item">
+    <div class="org-logo-text">
+      <div class="org-icon" style="background:#1a3a5c;">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="12" stroke="#5ba3d9" stroke-width="2" fill="#1a3a5c"/>
+          <ellipse cx="16" cy="16" rx="16" ry="6" stroke="#5ba3d9" stroke-width="1.5" fill="none" transform="rotate(-25 16 16)"/>
+        </svg>
+      </div>
+      <div class="org-name">Global Environment Facility</div>
+    </div>
+  </div>
+  <div class="vcap2-center">
+    <div class="vcap2-circle"><span></span></div>
+    <div class="vcap2-title">V C A P 2</div>
+    <div class="vcap2-sub">Adaptation to Climate Change in the Coastal Zone of Vanuatu<br>Vanuatu Department of Climate Change<br>Ministry of Climate Change</div>
+  </div>
+  <div class="org-item">
+    <img src="assets/docc-logo.png" alt="Department of Climate Change" class="org-seal" style="height:58px;">
+  </div>
+  <div class="org-item">
+    <div class="org-logo-text">
+      <div class="org-icon" style="background:#0468B1;">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <circle cx="15" cy="15" r="11" fill="#0468B1" stroke="white" stroke-width="1.5"/>
+          <path d="M15 5 L15 25 M5 15 L25 15 M8 8 L22 22 M22 8 L8 22" stroke="white" stroke-width="0.8"/>
+          <circle cx="15" cy="15" r="5" fill="none" stroke="white" stroke-width="1"/>
+          <text x="15" y="29" text-anchor="middle" font-size="4" fill="white" font-weight="bold"></text>
+        </svg>
+      </div>
+      <div class="org-name">United Nations Development Programme</div>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="brand">VCAP2 <span>Retreat Evaluation</span></div>

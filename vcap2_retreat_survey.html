@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCAP2 Retreat Evaluation Survey</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest: #1a3a2a;
+    --moss: #2d5a3d;
+    --sage: #5a8a6a;
+    --mist: #a8c4b0;
+    --cream: #f5f0e8;
+    --parchment: #ede8dc;
+    --accent: #c8663a;
+    --gold: #d4a84b;
+    --text: #1a2a20;
+    --light: #ffffff;
+    --border: rgba(90,138,106,0.25);
+    --shadow: 0 4px 24px rgba(26,58,42,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === NAV === */
+  .nav {
+    background: var(--forest);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+  .nav-brand {
+    font-family: 'DM Serif Display', serif;
+    color: var(--mist);
+    font-size: 1.15rem;
+    letter-spacing: 0.02em;
+  }
+  .nav-brand span { color: var(--gold); }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    padding: 8px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--mist);
+    letter-spacing: 0.03em;
+  }
+  .nav-tab:hover { background: rgba(168,196,176,0.15); color: var(--light); }
+  .nav-tab.active { background: var(--accent); color: var(--light); }
+
+  /* === VIEWS === */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* === HERO === */
+  .hero {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--moss) 60%, var(--sage) 100%);
+    padding: 64px 32px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-inner { max-width: 720px; margin: 0 auto; position: relative; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(212,168,75,0.2);
+    border: 1px solid rgba(212,168,75,0.5);
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--light);
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .hero p {
+    color: var(--mist);
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 560px;
+    font-weight: 300;
+  }
+  .form-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 720px;
+    margin: 40px auto 0;
+  }
+  @media (max-width: 600px) { .form-cards { grid-template-columns: 1fr; } }
+  .form-card {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(168,196,176,0.3);
+    border-radius: 14px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+  .form-card:hover {
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+  .form-card-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .form-card h3 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--light);
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+  .form-card p { color: var(--mist); font-size: 0.82rem; line-height: 1.5; }
+  .form-card-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+
+  /* === FORM WRAPPER === */
+  .form-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px;
+  }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: var(--sage);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    padding: 8px 0;
+    margin-bottom: 28px;
+    transition: color 0.2s;
+  }
+  .back-btn:hover { color: var(--moss); }
+
+  .form-header {
+    background: var(--forest);
+    border-radius: 16px 16px 0 0;
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .form-header::after {
+    content: '';
+    position: absolute;
+    right: -20px; top: -20px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(212,168,75,0.08);
+  }
+  .form-tag {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .form-header h2 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--light);
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+  .form-header p { color: var(--mist); font-size: 0.9rem; line-height: 1.6; }
+
+  .form-body {
+    background: var(--light);
+    border-radius: 0 0 16px 16px;
+    padding: 36px;
+    box-shadow: var(--shadow);
+  }
+
+  .form-group { margin-bottom: 28px; }
+  .form-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--forest);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+  }
+  .form-label .q-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    background: var(--forest);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.92rem;
+    color: var(--text);
+    background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--sage);
+    box-shadow: 0 0 0 3px rgba(90,138,106,0.15);
+    background: white;
+  }
+  textarea.form-input { resize: vertical; min-height: 100px; }
+
+  /* === SECTION DIVIDER === */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 36px 0 28px;
+  }
+  .section-divider::before, .section-divider::after {
+    content: ''; flex: 1;
+    height: 1px; background: var(--border);
+  }
+  .section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--sage);
+    white-space: nowrap;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+
+  /* === LIKERT SCALE === */
+  .likert-wrap { margin-top: 4px; }
+  .likert-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--sage);
+    font-weight: 500;
+    margin-bottom: 10px;
+    padding: 0 4px;
+  }
+  .likert-scale {
+    display: flex;
+    gap: 8px;
+  }
+  .likert-option { flex: 1; }
+  .likert-option input[type="radio"] { display: none; }
+  .likert-option label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 10px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--cream);
+    transition: all 0.18s;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sage);
+  }
+  .likert-option label:hover {
+    border-color: var(--sage);
+    background: rgba(90,138,106,0.08);
+    transform: translateY(-2px);
+  }
+  .likert-option input:checked + label {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: var(--light);
+    box-shadow: 0 4px 12px rgba(26,58,42,0.25);
+    transform: translateY(-2px);
+  }
+
+  /* === SUBMIT BUTTON === */
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--forest);
+    color: var(--light);
+    border: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+    letter-spacing: 0.03em;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(255,255,255,0.08));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .submit-btn:hover { background: var(--moss); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,42,0.3); }
+  .submit-btn:hover::before { opacity: 1; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* === SUCCESS === */
+  .success-screen {
+    text-align: center;
+    padding: 60px 32px;
+    background: white;
+    border-radius: 0 0 16px 16px;
+  }
+  .success-icon { font-size: 4rem; margin-bottom: 20px; }
+  .success-screen h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--forest);
+    margin-bottom: 10px;
+  }
+  .success-screen p { color: var(--sage); font-size: 1rem; }
+
+  /* === DASHBOARD === */
+  .dashboard-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+  .dashboard-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .dashboard-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--forest);
+  }
+  .dashboard-header p { color: var(--sage); font-size: 0.88rem; margin-top: 4px; }
+  .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--forest);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { background: var(--moss); }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--forest);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--sage); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
+
+  .dash-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    background: var(--parchment);
+    padding: 4px;
+    border-radius: 10px;
+    width: fit-content;
+  }
+  .dash-tab {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: transparent;
+    color: var(--sage);
+  }
+  .dash-tab.active { background: white; color: var(--forest); box-shadow: 0 2px 8px rgba(0,0,0,0.1); font-weight: 600; }
+
+  .question-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .question-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .q-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    background: var(--forest);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .avg-display {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .avg-score {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: var(--forest);
+    line-height: 1;
+  }
+  .avg-label { font-size: 0.78rem; color: var(--sage); }
+  .bar-chart { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; font-size: 0.78rem; }
+  .bar-key { width: 80px; color: var(--sage); text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; background: var(--parchment); border-radius: 4px; height: 20px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--moss), var(--sage));
+    border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: white;
+    min-width: 0;
+  }
+  .bar-count { width: 28px; color: var(--sage); font-size: 0.72rem; flex-shrink: 0; }
+
+  .open-responses { display: flex; flex-direction: column; gap: 10px; }
+  .open-response {
+    background: var(--cream);
+    border-left: 3px solid var(--sage);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .open-response .resp-meta {
+    font-size: 0.72rem;
+    color: var(--sage);
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px;
+    color: var(--sage);
+    font-size: 0.9rem;
+  }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+  .loading { text-align: center; padding: 40px; color: var(--sage); font-size: 0.9rem; }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 3px solid var(--border);
+    border-top-color: var(--sage);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .alert-error { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+  .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #16a34a;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .responses-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .responses-table th {
+    background: var(--parchment);
+    color: var(--forest);
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .responses-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .responses-table tr:hover td { background: var(--cream); }
+  .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+
+  @media (max-width: 600px) {
+    .nav { padding: 0 16px; }
+    .form-body, .form-header { padding: 24px; }
+    .likert-scale { gap: 5px; }
+    .likert-option label { padding: 8px 2px; font-size: 0.72rem; }
+    .dashboard-wrap { padding: 24px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">VCAP<span>2</span> Retreat</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showView('home')">🏠 Home</button>
+    <button class="nav-tab" onclick="showView('dashboard')">📊 Dashboard</button>
+  </div>
+</nav>
+
+<!-- HOME VIEW -->
+<div class="view active" id="view-home">
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">2026 VCAP II Retreat</div>
+      <h1>Retreat Evaluation<br>Survey Portal</h1>
+      <p>Help us shape a better retreat experience. Complete the pre-retreat survey before sessions begin and the post-retreat survey once the retreat concludes.</p>
+      <div class="form-cards">
+        <div class="form-card" onclick="showForm('pre')">
+          <span class="form-card-icon">📋</span>
+          <h3>Pre-Retreat Survey</h3>
+          <p>Share your expectations, confidence levels, and topics you'd like addressed before we begin.</p>
+          <div class="form-card-cta">Start Survey →</div>
+        </div>
+        <div class="form-card" onclick="showForm('post')">
+          <span class="form-card-icon">✅</span>
+          <h3>Post-Retreat Survey</h3>
+          <p>Reflect on outcomes, session quality, and share suggestions to improve future retreats.</p>
+          <div class="form-card-cta">Start Survey →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRE FORM -->
+  <div id="pre-form-section" style="display:none">
+    <div class="form-wrapper">
+      <button class="back-btn" onclick="hideForm()">← Back to Home</button>
+      <div class="form-header">
+        <div class="form-tag">Pre-Retreat</div>
+        <h2>2026 VCAP II Retreat Pre-Evaluation Survey</h2>
+        <p>Please complete this short survey before the retreat begins. Your responses will help us tailor the sessions to meet your expectations.</p>
+      </div>
+      <div class="form-body" id="pre-form-body">
+        <div id="pre-alert"></div>
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" id="pre-name" class="form-input" placeholder="Enter your full name">
+        </div>
+
+        <div class="section-divider"><span class="section-label">Section 1 · Expectations & Preparedness</span></div>
+        <p style="font-size:0.8rem;color:var(--sage);margin-bottom:20px;">Rate each statement on a scale from 1 (Strongly Disagree) to 5 (Strongly Agree)</p>
+
+        <div id="pre-likert-questions"></div>
+
+        <div class="section-divider"><span class="section-label">Section 2 · Open-Ended</span></div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="q-num">8</span> What specific topics or issues would you like to see addressed during this retreat?</label>
+          <textarea id="pre-open" class="form-input" placeholder="Share your thoughts..."></textarea>
+        </div>
+
+        <button class="submit-btn" id="pre-submit-btn" onclick="submitForm('pre')">Submit Pre-Retreat Survey</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST FORM -->
+  <div id="post-form-section" style="display:none">
+    <div class="form-wrapper">
+      <button class="back-btn" onclick="hideForm()">← Back to Home</button>
+      <div class="form-header">
+        <div class="form-tag">Post-Retreat</div>
+        <h2>VCAP2 Retreat Post-Evaluation Survey</h2>
+        <p>Please complete this survey after the retreat concludes. Your feedback will help us improve future programs.</p>
+      </div>
+      <div class="form-body" id="post-form-body">
+        <div id="post-alert"></div>
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input type="text" id="post-name" class="form-input" placeholder="Enter your full name">
+        </div>
+
+        <div class="section-divider"><span class="section-label">Section 1 · Outcomes & Impact</span></div>
+        <p style="font-size:0.8rem;color:var(--sage);margin-bottom:20px;">Rate each statement on a scale from 1 (Strongly Disagree) to 5 (Strongly Agree)</p>
+
+        <div id="post-likert-questions"></div>
+
+        <div class="section-divider"><span class="section-label">Section 2 · Open-Ended</span></div>
+
+        <div class="form-group">
+          <label class="form-label"><span class="q-num">9</span> What suggestions do you have for improving future retreats?</label>
+          <textarea id="post-open" class="form-input" placeholder="Share your feedback..."></textarea>
+        </div>
+
+        <button class="submit-btn" id="post-submit-btn" onclick="submitForm('post')">Submit Post-Retreat Survey</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div class="view" id="view-dashboard">
+  <div class="dashboard-wrap">
+    <div class="dashboard-header">
+      <div>
+        <h2>Response Dashboard</h2>
+        <p>Real-time monitoring of retreat evaluation responses</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="live-badge"><span class="live-dot"></span> LIVE</div>
+        <div id="storage-badge" style="font-size:0.72rem;color:var(--sage);padding:4px 10px;background:var(--parchment);border-radius:20px;border:1px solid var(--border);">...</div>
+        <button class="refresh-btn" onclick="loadDashboard()">⟳ Refresh</button>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-value" id="stat-total">—</div><div class="stat-label">Total Responses</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-pre">—</div><div class="stat-label">Pre-Retreat</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-post">—</div><div class="stat-label">Post-Retreat</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-avg">—</div><div class="stat-label">Overall Avg Score</div></div>
+    </div>
+
+    <div class="dash-tabs">
+      <button class="dash-tab active" onclick="switchDashTab('pre')">Pre-Retreat Analysis</button>
+      <button class="dash-tab" onclick="switchDashTab('post')">Post-Retreat Analysis</button>
+      <button class="dash-tab" onclick="switchDashTab('raw')">All Responses</button>
+    </div>
+
+    <div id="dash-content">
+      <div class="loading"><div class="spinner"></div>Loading responses...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==========================================
+// DATA
+// ==========================================
+const PRE_QUESTIONS = [
+  "I have clear expectations for what I hope to gain from this retreat.",
+  "I am interested in discussing achievements, challenges, and lessons learnt.",
+  "I feel confident in my understanding of VCAP2's current outputs and targets.",
+  "I believe the retreat will help address critical challenges and gaps.",
+  "Team cohesion and collaboration are currently strong.",
+  "I expect to gain new skills or knowledge from this retreat.",
+  "I feel prepared to fully engage in all sessions and activities."
+];
+const POST_QUESTIONS = [
+  "My expectations for the retreat were met.",
+  "The presentations on achievements, challenges, and lessons learnt were useful.",
+  "I gained new insights or strategies regarding VCAP2's implementation.",
+  "The strategic planning sessions clarified priorities and actionable steps for 2026.",
+  "Team cohesion and shared vision improved as a result of the retreat.",
+  "The sessions and activities were impactful and relevant.",
+  "I am committed to applying what I learned in my work going forward.",
+  "The retreat was well-organized and met my professional needs."
+];
+const SCALE = ["Strongly Disagree","Disagree","Neutral","Agree","Strongly Agree"];
+
+// ==========================================
+// STATE
+// ==========================================
+let currentView = 'home';
+let dashTab = 'pre';
+let allResponses = [];
+
+// ==========================================
+// STORAGE (claude.ai shared storage + localStorage fallback)
+// ==========================================
+const USE_CLOUD = typeof window.storage !== 'undefined';
+
+async function saveResponse(type, data) {
+  const key = `vcap2_response_${type}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  const payload = JSON.stringify({ type, timestamp: new Date().toISOString(), ...data });
+  try {
+    if (USE_CLOUD) {
+      const result = await window.storage.set(key, payload, true);
+      return result !== null;
+    } else {
+      // localStorage fallback for standalone HTML use
+      const index = JSON.parse(localStorage.getItem('vcap2_keys') || '[]');
+      index.push(key);
+      localStorage.setItem('vcap2_keys', JSON.stringify(index));
+      localStorage.setItem(key, payload);
+      return true;
+    }
+  } catch(e) {
+    console.error('Storage error:', e);
+    return false;
+  }
+}
+
+async function loadAllResponses() {
+  try {
+    if (USE_CLOUD) {
+      const keys = await window.storage.list('vcap2_response_', true);
+      if (!keys || !keys.keys) return [];
+      const responses = [];
+      for (const key of keys.keys) {
+        try {
+          const item = await window.storage.get(key, true);
+          if (item && item.value) responses.push(JSON.parse(item.value));
+        } catch(e) {}
+      }
+      return responses.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    } else {
+      // localStorage fallback
+      const index = JSON.parse(localStorage.getItem('vcap2_keys') || '[]');
+      const responses = [];
+      for (const key of index) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (raw) responses.push(JSON.parse(raw));
+        } catch(e) {}
+      }
+      return responses.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    }
+  } catch(e) {
+    console.error('Load error:', e);
+    return [];
+  }
+}
+
+// ==========================================
+// VIEWS
+// ==========================================
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nav-tab')[v==='home'?0:1].classList.add('active');
+  currentView = v;
+  if (v === 'dashboard') loadDashboard();
+}
+
+// ==========================================
+// FORMS
+// ==========================================
+function buildLikert(containerId, questions, prefix) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'form-group';
+    div.innerHTML = `
+      <label class="form-label"><span class="q-num">${i+1}</span> ${q}</label>
+      <div class="likert-wrap">
+        <div class="likert-labels"><span>Strongly Disagree</span><span>Strongly Agree</span></div>
+        <div class="likert-scale">
+          ${[1,2,3,4,5].map(n => `
+            <div class="likert-option">
+              <input type="radio" name="${prefix}_q${i}" id="${prefix}_q${i}_${n}" value="${n}">
+              <label for="${prefix}_q${i}_${n}">${n}</label>
+            </div>`).join('')}
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function showForm(type) {
+  document.getElementById('pre-form-section').style.display = 'none';
+  document.getElementById('post-form-section').style.display = 'none';
+  document.getElementById(type+'-form-section').style.display = 'block';
+  buildLikert(type+'-likert-questions', type==='pre'?PRE_QUESTIONS:POST_QUESTIONS, type);
+  document.getElementById(type+'-form-section').scrollIntoView({behavior:'smooth'});
+}
+
+function hideForm() {
+  document.getElementById('pre-form-section').style.display = 'none';
+  document.getElementById('post-form-section').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showAlert(id, msg, type='error') {
+  const el = document.getElementById(id);
+  el.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+  setTimeout(()=>{ el.innerHTML=''; }, 5000);
+}
+
+async function submitForm(type) {
+  const questions = type==='pre' ? PRE_QUESTIONS : POST_QUESTIONS;
+  const name = document.getElementById(type+'-name').value.trim();
+  if (!name) { showAlert(type+'-alert','Please enter your name.'); return; }
+
+  const scores = {};
+  let missing = false;
+  questions.forEach((q, i) => {
+    const sel = document.querySelector(`input[name="${type}_q${i}"]:checked`);
+    if (!sel) { missing = true; return; }
+    scores[`q${i+1}`] = parseInt(sel.value);
+  });
+  if (missing) { showAlert(type+'-alert','Please answer all rating questions.'); return; }
+
+  const openAns = document.getElementById(type+'-open').value.trim();
+
+  const btn = document.getElementById(type+'-submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+
+  const ok = await saveResponse(type, { name, scores, open: openAns });
+
+  if (ok) {
+    document.getElementById(type+'-form-body').innerHTML = `
+      <div class="success-screen">
+        <div class="success-icon">🌿</div>
+        <h3>Thank you, ${name}!</h3>
+        <p>Your ${type==='pre'?'pre':'post'}-retreat evaluation has been recorded.<br>Your feedback is valuable to the VCAP2 team.</p>
+      </div>`;
+  } else {
+    btn.disabled = false; btn.textContent = 'Submit Survey';
+    showAlert(type+'-alert','Submission failed. Please try again.');
+  }
+}
+
+// ==========================================
+// DASHBOARD
+// ==========================================
+function switchDashTab(tab) {
+  dashTab = tab;
+  document.querySelectorAll('.dash-tab').forEach((b,i) => {
+    b.classList.toggle('active', ['pre','post','raw'][i] === tab);
+  });
+  renderDash();
+}
+
+async function loadDashboard() {
+  document.getElementById('dash-content').innerHTML = '<div class="loading"><div class="spinner"></div>Loading responses…</div>';
+  allResponses = await loadAllResponses();
+  updateStats();
+  renderDash();
+}
+
+function updateStats() {
+  const badge = document.getElementById('storage-badge');
+  if (badge) badge.textContent = USE_CLOUD ? '☁️ Shared cloud storage' : '💾 Local browser storage';
+  const pre = allResponses.filter(r=>r.type==='pre');
+  const post = allResponses.filter(r=>r.type==='post');
+  document.getElementById('stat-total').textContent = allResponses.length;
+  document.getElementById('stat-pre').textContent = pre.length;
+  document.getElementById('stat-post').textContent = post.length;
+  const all = allResponses.flatMap(r => Object.values(r.scores||{}));
+  document.getElementById('stat-avg').textContent = all.length ? (all.reduce((a,b)=>a+b,0)/all.length).toFixed(1) : '—';
+}
+
+function renderDash() {
+  const content = document.getElementById('dash-content');
+  if (dashTab === 'raw') { renderRaw(content); return; }
+  const type = dashTab;
+  const questions = type==='pre' ? PRE_QUESTIONS : POST_QUESTIONS;
+  const openLabel = type==='pre'
+    ? "What specific topics or issues would you like to see addressed during this retreat?"
+    : "What suggestions do you have for improving future retreats?";
+  const subset = allResponses.filter(r=>r.type===type);
+
+  if (!subset.length) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No ${type}-retreat responses yet.</p></div>`;
+    return;
+  }
+
+  let html = '';
+  // Likert summaries
+  questions.forEach((q, i) => {
+    const key = `q${i+1}`;
+    const vals = subset.map(r => r.scores?.[key]).filter(Boolean);
+    const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : 'N/A';
+    const counts = [1,2,3,4,5].map(n => vals.filter(v=>v===n).length);
+    const max = Math.max(...counts, 1);
+
+    html += `<div class="question-card">
+      <h4><span class="q-badge">${i+1}</span>${q}</h4>
+      <div class="avg-display">
+        <div class="avg-score">${avg}</div>
+        <div class="avg-label">Average<br><small>${vals.length} response${vals.length!==1?'s':''}</small></div>
+      </div>
+      <div class="bar-chart">
+        ${[1,2,3,4,5].map((n,idx) => `
+          <div class="bar-row">
+            <div class="bar-key">${SCALE[idx]}</div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${max?Math.round(counts[idx]/max*100):0}%">
+                ${counts[idx]>0?counts[idx]:''}
+              </div>
+            </div>
+            <div class="bar-count">${counts[idx]}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  });
+
+  // Open responses
+  const opens = subset.filter(r => r.open && r.open.trim());
+  html += `<div class="question-card">
+    <h4><span class="q-badge">${questions.length+1}</span>${openLabel}</h4>
+    ${opens.length ? `<div class="open-responses">
+      ${opens.map(r => `<div class="open-response">
+        <div class="resp-meta">${r.name} · ${new Date(r.timestamp).toLocaleString()}</div>
+        ${r.open}
+      </div>`).join('')}
+    </div>` : '<p style="color:var(--sage);font-size:0.85rem;">No open-ended responses yet.</p>'}
+  </div>`;
+
+  content.innerHTML = html;
+}
+
+function renderRaw(content) {
+  if (!allResponses.length) {
+    content.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>No responses have been submitted yet.</p></div>`;
+    return;
+  }
+  const allQs = [...PRE_QUESTIONS.map((_,i)=>`PRE Q${i+1}`), ...POST_QUESTIONS.map((_,i)=>`POST Q${i+1}`)];
+  let html = `<div class="table-wrap"><table class="responses-table">
+    <thead><tr>
+      <th>Name</th><th>Type</th><th>Submitted</th><th>Avg Score</th><th>Open Response</th>
+    </tr></thead><tbody>
+    ${allResponses.map(r => {
+      const vals = Object.values(r.scores||{});
+      const avg = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : '—';
+      return `<tr>
+        <td><strong>${r.name}</strong></td>
+        <td><span style="font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">${r.type}</span></td>
+        <td>${new Date(r.timestamp).toLocaleString()}</td>
+        <td><strong>${avg}</strong></td>
+        <td style="max-width:280px;font-size:0.8rem;">${r.open || '<span style="color:var(--sage)">—</span>'}</td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>`;
+  content.innerHTML = html;
+}
+
+// ==========================================
+// INIT
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Auto-refresh dashboard every 30s when visible
+  setInterval(() => {
+    if (currentView === 'dashboard') loadDashboard();
+  }, 30000);
+});
+</script>
+</body>
+</html>
